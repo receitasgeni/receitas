@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Receitas Geni</title>
+<base target="_self">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@preline/preline@2.0.0/dist/preline.min.js"></script>
+<script defer>
+    document.addEventListener("DOMContentLoaded", function() {
+        const themeToggle = document.getElementById('theme-toggle');
+        const currentTheme = localStorage.getItem('theme');
+        
+        if (currentTheme === 'dark') {
+            document.documentElement.classList.add('dark');
+            themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i>';
+        } else {
+            themeToggle.innerHTML = '<i class="fa-solid fa-moon"></i>';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            themeToggle.innerHTML = isDark ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+        });
+    });
+
+    function showSection(sectionId) {
+        document.querySelectorAll('section').forEach(section => {
+            section.classList.add('hidden');
+        });
+        document.getElementById(sectionId).classList.remove('hidden');
+    }
+
+    const recipes = [
+        {
+            id: 1,
+            title: "BISCOITO DE QUEIJO",
+            category: "Brasileira",
+            image: "https://i.pinimg.com/originals/00/86/c3/0086c3d621f23e7dbeebd1f2028284a8.jpg",
+            ingredients: ["02 copos americanos de queijo ralado", "03 copos americanos de polvilho doce", "01 copo americano de óleo (não muito cheio)", "01 copo americano de leite", "04 ovos", "01 pitada de sal"],
+            preparo: ["Coloque o polvilho em uma bacia", "Depois o óleo (frio)", "Misture bastante e coloque o leite bem quente e o queijo ralado", " Amasse bem", "Acrescente os ovos e o queijo", "Enrole e coloque para assar por 40 minutos a 180°C"]
+        },
+        {
+            id: 2,
+            title: "PIZZA",
+            category: "Italiana",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJNtRJRdkKV54COQObYRUvLl8AqXJzljrYOg&s",
+            ingredients: ["1kg de farinha de trigo", "500ml de água", "01 colher de sopa de açúcar", "1/2 colher rasa de sopa de sal", "01 ovo", "50ml de óleo", "01 pacote de fermento biológico seco"],
+            preparo: ["Em uma vasilha coloque o ovo, óleo, açúcar, sal, um pouco de água e o fermento", "Misture tudo e adicione a farinha, sovando por 10 minutos", "Divida em quatro porções e deixe descansar por uma hora", "Depois, abra a massa e recheie", "Leve ao forno e coloque para assar pr 30 minutos a 180°C"]
+        },
+         {
+            id: 3,
+            title: "TORTA NAPOLITANA",
+            category: "Italiana",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs52WDkY4MzT90HTRZHnpDxemQ68AXW2C6mQ&s",
+            ingredients: ["01 tablete de caldo de galinha", "01 xícara de chá de leite", "03 ovos", "1/2 xícara de chá de óleo", "03 colheres de sopa de queijo ralado", "02 xícaras de chá de farinha de trigo", "01 colher de sopa de fermento", "01 colher de sopa de salsa", "02 tomates", "100g de mussarela picada", "100g de presunto picado", "Sal a gosto"],
+            preparo: ["No liquidificador, bata o caldo de galinha, o leite, os ovos, o óleo, o queijo ralado, a farinha e o fermento", "Coloque metade da massa em uma forma untada e adicione os outros ingredientes, cobrindo com o restante da massa", "Asse no forno por 60 minutos a 180°C"]
+        },
+        {
+            id: 4,
+            title: "BOLO DE CENOURA",
+            category: "Brasileira",
+            image: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxITEhUTExIVFRUWFxUVGBgYFxYVFRgYFRUWFhUXFRgYHSggGB0lGxUXITEhJSkrLi4uFx8zODMtNygtLisBCgoKDg0OGhAQGi0lHyUtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSstLS0tKy0tLS0tLS0tLS0tLS0tLS0uLf/AABEIAM4A9QMBIgACEQEDEQH/xAAcAAABBQEBAQAAAAAAAAAAAAAEAQIDBQYABwj/xAA+EAABAwIEAwYEBAUDBAMBAAABAAIRAyEEBRIxQVFxBhMiYYGRMqGx8CNCwdEHFFJy4YKS8RUzU2JDY+IW/8QAGgEAAgMBAQAAAAAAAAAAAAAAAQIAAwQFBv/EAC8RAAICAQMDAgUDBAMAAAAAAAABAhEDBBIhMUFRBRMUIlJhoTJxkcHR8PEVI0L/2gAMAwEAAhEDEQA/APXiRwBTC48kZ3jVC54SMYCqUXuPIKr7SYWaeriFfOqBA446hCrnHdFoshLbJMwpVlleTVKp2gcSVd4DLqeqXNutDRe1ogBZsek+pmmer+lEeX4Cnh2aWjqeJKd8RmEx7y4qV1gtlJKl0MbbbtnPqTZDV6anYElVqICvLE4NUxak0oEGBcVJCa5QhC4qGo5S1Cg670GFEVaooamROqCZhMdU8Q6rUYZwDQkcFPhjqbjyjB47s7WbcQVDl+qmDqsQtxjswaBAuUBhsua4Ev3Kq+HjF/KXfEykqkYXFY4OcboRlYStJn3Zdt3U7H5LG1KbmOIO4WWeJxfJtx5VJcFsKgTlW0XlH4e5AG5IHuqWi2xmJrhgkmAqmp2oYLASvTMZ2aw4wru8AJ0kknovFcryJ9XvHgwxhPU9Fq+Hr9Rn99Sug6r2vINqaHr9qnOFqaz+IqAE6bjmogSVNkV2Jci4OeOP5VJSzocVTBp5H2XNaTwTcApmopZsyNwuWWhKhtQbkfUAlOunNCeGrccwi0pO7RELoUIQtZCkC5wT2hQgrQlJXKszLOaVBw7x4bO02UbolWW4SvCrsLnFF/wvafUI3vmnYhG0wNNDHNTYTnOTC5QBxUTyufUQ1WsgwiVnKuxNRPxFcqur1HHgUjYyIa2IAMykfnx+HVZVuNpPcYDShxkbtyY9UoaLennDG3Jkp1TtQOCoMRhKbN3BU+NzSkz80qXQdprj2m1WVRjxrOoLH1O0DZ8KPwfaJp3VGZtrg1adKLtlnpITMXinU2F43FwkGZUzxCGzjGsNF0G6zxTtcGttV1GYjttjMQzuyQGxBiZQwpl7O5ouI1CHdOKrcjr6WmRubLYZTlbR44gkKa3VezDryxdNiUnfYqcu7LNtrG3zVhQyekHXaIFh5q4pUiPNP7oEzxC4E9Zkk7bOgoRQEcup/wBIVbUywteCxgP9X6q/NLmlawRuq8epnB2mFxTRQYjs5RcZ06Z3HmuV47yXKx6vM+dwFCPg9SpNapixVrXoltcr2aZ5mhSkTSUmpQgrilplRuK6mVCEr3Lxj+KmNNSsGDZg+ZXreY4jSwleV51lhqOc47kys2fIo8GnBjcrZ5s3F1aZ8D3N6Eq4y7tljGW753rdLmeTOadlTVcIRwUjNMaUGjeYPt9iv6gVZ0v4gV+LGn1XljSW81O3HPHFPwI0epj+Ir+NL5pjv4kRvRd7heYHNXKGpmZRFpHplX+Jg/8AC73CrsT/ABOPCkfcLzirjyVNhME6oNTrN+qZRFbNZiP4j1nfDTHuq6v2uxtTiG9ELTwjW8E8s9EyihdwPWxWIf8AHUKg/lydySjC4JveJqQLZAMPspaeGN07vFK2opSJbGNou0i5907EgtAAMypGvROKx9Lu2MDPECCXfVJPhFmLlheCYNTHFu/BbrDjblCy/Z7EUqxgiHN2WsZsvKeq5d2WvB29PHbAR9YAwunimujqkaea5lGgc10pXALoCe2lG6lkGd0Oi5PcFyFshtmuUzHIFj1O169+eZCw5dqUAclL0QD6j0xtYAIPHYsMEkqhr5m59hsqsmVQLseJzCc4zDU7SNlU1guhDZtj6VCn3lV0CYaB8Tzyb+/Bc9uWSR0EljjQ6ph2uFxKo8yy6i0+Itb1IH1VHmnaKs4O0vfTY7hq7sR6+J/VoWfbjYuHGeYF/wDcbq5YK6sr96+iNLislpRqL2NB2Jc0T0vdAu7PtN2vbH9zR9SqUvBMl0k8STJ6nilhgHBOo13FbvsH1+zD+EHoQfoq+t2fqj8p9kw93y+SlpYks+B5b0Lh9E1tdxNqfYCZkzy4AttIlafH4bQWNAtplVVPO6zTdwd1Ez67/NWLu0NOqA2rTLSNnN8Q9Qbx0lXY5/UU5Mf0gbXWLj6IV9QlGloIOkhzTxH6jcHqq94IKvKDimFLKdjhppiOKgAeriQ1BvzE8FEKRcUZRy7moQgw2Je54uj6zrru4DdhdROaYJKpydTRh6Gp7K4inqmDq2W6pGy887JYprCJHqvQKb5uDYry3qcf+07GB/IiTZNdU4HilLwoqtSSIErnpWX2G0QPJc9yGfeOBTK1Qgwl2WyBTGyuUDMV5LkHGRDWU6qnZVVLTxYUwxzea95Z5yi5FVQ4nGBoJJhUWOz6nTEkrAdoe1NSsdLPC36oSkNGFmzxuaiqTBsFHg6guF59hMxeOKs8LmxBWOcG3ZthJJUjdYVoJJOwuV5l28zB1XEng1g0tjlxW0x+LNPDxMF0E+o4+QFusqp7Tdm31KTK+5eAAxol0xxjayvx4tsfuVTyXI85cVzAi8Zl9Sk7RVaWOFy11nCdpG7ehS4PCPqODKbHPcdg0En/AI81GMkQaU4MWmw/ZUMM4rEU6PHQ38Sr7Ns3rJR9DF5VQ+Gg/EOH5qr5H+ymC33UoN+DF6EgYOa9CpduntH4GBptbsIonqRId6pXdv8AUPHgqToifDtO07whx5J83j8nnpoqN1EhbqrnuFqAuOWMiYc5pLfLdoseCix2CwRgihiaIIBnUx4vYHQ4yRJvcJdyXcdRvszEUazmO1NMH7sRxC0uEoUsS2Q4U6mxadp5t8lPmPZCqGufT/EY0S6W91UZaRrY4zsbQTKqMNSaGmbEcRx5eqdZdpVPDuH47I6tP8sjmLhDNILe7eI5FcM6r0jDXy3k66mHaKm4RVpAnmFqUkzE4tEOHwWnz81I6mSYAknZS0sXh3fC8t8irPJcW2lWZV8Lw0zCYUkp9kcT3Lq7qelrRMOsSByCx+KqyYF1uO2PabFYoFrHd3SiNA4/3FYRuEqMdJaqpRfU0Qklwa3s1gtR+AkxMATYblaihXsQNh8lB2dxgoZZXxThpdUd/LU+cb1XD0t1an4/MKdDLqJgh2KqOeLX0U/C0eroI6riZ9HPI7f3f9v5OhDUxXC+xO+pIUDKkHdXmY0qf8/gcvAGoMZ3nMkg1Kk/6Wn3Wa7SZqx2JrkQB3jgALCGnSPkJ9VmnoJwTvzX4/oWQ1UZOg1uKvukq5gCQN1nHZm0CSQh25gJkFItG3zRb7yNQ7FXXKg/nZvK5D4cPuouTnlIcXFRYjtCI8LT6rNVZTmCQvR2cekF4rFOqfEUGaalphShqDGQMymjsswwfVY07TLv7Rc/IKLSi8EI1eYj03PvYIUGxO0eOf8AiOJ8L/CByA29eKJyjt+/CYF7KbtWJqOLWOIltGmGjxCbFxJMDhEnYA57Oa/eVtJJ002ku9BJH0Hqhuz2SOxbyAYAiTBIudvLj7KSyLHFyk6QY4972kuW5bUr66z3xTaZqVXmZc4zAJu95mY/cTpqmcMo0O5wDCCfie4fivEFznGLtAA25covqcBk7aVJlIjU2ncA3Go7ujn+/BCZhlYqNAu2HGCBfrx4WXJ/5fHvqK48m1aW+rPPsBl/ev8AG5xkts0AlxcRLQSYDoMx0HFbXJey7GNIqta8nhGwkkNJ/NHNWOT5GykAAC4gzqdE3vG3Mk+quqbI3uf3+wsOs9Sc/lx8L8l0MSjyVTMhohsAEDgJLg235A4nSei6vkFBzml7dUCJkiRyJBvZXAAiwHouf0XM+Jy3+pln2MdisgDdfc1HNa83aDLSfMK5yzANbTDHO1ECCTMEHcE2kTzRhwsRsd/8JcOBtseX3ur56vJOKTk+BlFJcDcTlgeIcBsWgxcg3cDwIt8gsB2myttFx0OFyQW8gO7Id0JLh/p9vTQ83tHLjKzXavuwx5foD3NsSILg0h2nY3k9LcJV3pupmsqi3af+WVZI3Fo8rx9NVNVq2OYZaVQ4nBEHZesx5EcfJjZSwVIys8bFEuoKMUlfuKdpJTzOoOJReFzOq9zWNBc5xDWjiXOMNA6khCsZzC2n8MMupjEPxtRv4eDZ3scHVXS2i33k9WhRSQri0XXb+r3bsJllKHGmGUrbOrVS3Wf9zh81ZYylTr5zhcE0TTwopt8g3Dt1vJ/1N0qo7J0++zF+Nqu1NwlOriHedQyGDqXOkf2qfslTcz/qOYvMuNMYemeOvEOl56gAH1KlolNFp2ZzBtbMsfmG/wDL0armnkXeGkP9rXBeaYoNc5x13JM3W4yGg7DZPiajxD8ZiWsbzNOkNX1Dx6rzp+ArFx/DduUOH1CrCBg2kRrHun0svaLd4B6oQZbW/wDG72UwybEf+J3yUqIfmDGYMR/3m+65RM7O4kie79yFyWsf2Dci+rYSAoGUCuzLH126NZpUG1ACIIqP0niRwKEaxvftaW1a7HGGl8sY7hNrQpHG+40sivgndiGNMFwnkPEfYJ9LEF86Kb3BokmNIA5mUmBovo4h7Hvp0WkOALG6ujQeabgsOyk57KznnvPhcXQ2/wDVCfYivezqOIc9rnDu2hv9TpJvEADdH4R34RqGATIHKGi56TPsg6FIUWVqXdsMjUKgvysCgM7zAMY1hv4QA0GDpHPlO59FXNc0i3G+LZWS5ztIN3kA+ZJn63XqXYbBNoYfUWwST4riQSBseSw3YrBiriGuAkNveeJ8NwQQf2K9WqUZBAiBA8rcuS4PrGoSSw+ep1NLCo35H1XEusYuB+pT2U7cfXe26ioUwBGqeQO9tyiS4kcvqvOy44RqZxBPE+3BJVcAL7bdeVk4Wk9P3smz8/rfZIAWnfj98E+rv93UQJ4kenlsnCkNyNtuYncqd7INrCRI/wAFRtAuTPQcLBTvbwtp+aYDJ3236poy4CmMBdIuef8Ajmsj23Y2Ik6tLhYSCR+JHMDS1xkcQ2bTG1LRv6BY3tSZ192Ram5zyRLS1zmNgP8A6idtpAI4rf6Z82dCTa2sEoupVWDxCfPnxCr8XlwN1VZfWBexrnuDZiAJPM26lHYZ7jVcxpDWifiMGBzXrI6dtWmcqWoSlTRUYrAwYhB18GRwV+yuKhdY+HjEj3CmLWPbzI4i6LhOIqnjkZTultGYpuHy5mHaIfUecTVPO2mi3/aJjmq3+QYXCT4Z8R8uKhxc1A4jafYDYewCMZcNgnDlItcqx7KWW1mg/jYisNfMUqQlgnze4lE47FNpZVhaLXguqPq4qrBkgk93SB89I28lmizwaQnPHhA3H6BM2LVm17auNGjgsJxpUBUeP/sreJ09I+ay1PGP53SY/H1Kzi97i5xgSSSYaABc+QAUQ5+6TI+R8S4Cv+pP5/Rcc2qf1FCPbBTXMVXBaFuzKofzH3KVALkSUOpupNpmn3YeZtUfd4HIcApK+YOeGh51Bo0jmANoVYann6GxFkgfw/wY3XQOcHurEiD4m7f+wTg8AQ7x0z6uahabtR8IN+UyB5j9Skq42lSu6p4+LWeObAQ7g33lQhZvrNpUS5ztbQdTfkGt9/uyx7e8xFXm5x9kb2mxgcWsaIAGqPM7fJafsHk4FPvXi79v7fJZ82RY4ObNOKG+SiabsPk4otLti6J42btaecrWlwEDeZiPdV+BaA+DaxA2IMI8CN9o9fkvEazI8mVyZ3Nu1JCUngkxwJB6zdOE+v3CaymATaJvb2v7JxeZtEfr+qyvrwQkG3Hb1UdgIbYD9OCRkEmdwd+BEcE4Hc/IIVRBjWDcWG8RzuSfOSpAOXG6Y0u3MR1k+SU4xo8PFF2+hDnaiYA9Z/wnltjv99EgPT7/AOU01gDFvI8uqH7EFe6QZPnvE2tKwmdYN1TFsDQyoA4HQ54YXtBGtrSTBi7j/aTwWizyq8tMQIm8x5fssnnmOFWWmmHP0Gm3Rdo0idbiDBOkHlB4Luek4Wp7xMvESr1U6Zf3Uue57ms4kNm1+JiLpO6DDob+JXdueDVCw1xWINPRVIggt0FstB1aQPD4b7cU4OGkhh0N/PVdu48mheqxu4nBzKpsc1zqYdTa4ve+zg3YKGrVbTpimABVJkubLnAcgE8HwnQe7p8Xu+N/RMZYeAd2281H/EeisKhc4r92ym3vDULhLiGwQRw5lVdLNBBAqQDuFbVq1JlINA1vdLg5w8QDo9gd/ZZ/GY9zTuCSOIBgCwPVVyVlkXQe3HWgOEeikbjfDpt14qtweKw5BFQOYTxDWvHsRIRLBghALnmT8Whzbffkq3Guw6lfcvMvwxcA48VZ0cuv5FEU2tcwFkEACI5IzCvndYpTbZ0IY0lRW1coO3DgoP8AprtlqaYBELnUQeoSb2PsRkH5e4cFy1oogrlPcB7aPKjt5cJ8TfRw2RrMI1tMVqxLaZnSLF9QjcU/Lm42HmnZHgO/xFOnsHOEkRMDcy1wmwVf2rxxq4h8WYw93TbwaxtgAF2DjguPzh7xoaBTZ/S3j/e7dx+SrmtJ2CLwGAdUdAWxwGRspC4kwVCGQwtE18Q1u+pwn+0bx6Ar2PAtaBpaAKbPC0Sdg0WJ52XnPYzChmLqMdYta7STv8Qgj0j3XoeSYBpqPMuFoAmwMg7cbz8uq4/qs9seeiR1NBFO2XjKQDW3uNTpPDVJPnF1Oyw8Rk+W3p98UEwXIeQAfCOvLzRLydM8Ley8pJHSfUkrj4R+Y/Tkm0tUu1R5Ry4JIB5zz48OXp7JSQd5B4naY6JO1AHbA3SsqeSg1EO8r3/f0XGLwDc3vtwkcFNvkJPWsJA84CGYGuIfFiADz9VMHW3gofVw2Pwxwvy80YoiCe8ueXyTXM4yB1EgekqJsCwmN+iacQOYtxn5KbfAQfMXagR+UiLb35X6LD9pKbSGP75r6upo0Nu9wLjpHhaNJibCeHMTscViN5EWmJN/0WUzjLXue0j8p1CIabkEmRt16Lt+m5Fj4kV5Y2isrdojUrUar2aXsdpe+XOc9tmjvCeLWyJ5RyWsxOVUa0Fw0uGzhBnzINnbLzivTe0+Kxk35mbyTcnqtp2Tz9r2CnU8L22Bkw4bN6Rt6L0mNnFzx5Ac0yitQOp8PH/ldJY3/SNj1QD6jWjvHgvi+p9mnkGM6ceUr0tkAkGCHAgiAWkG8HmvI+1GIpuxD6dCe6a6BckEixj/ANZkDy6q2zNRD37qji47uPsOKizHAGS5p1eYaYEcJKNymmJ1W5AEF084aN7/AEVniaZIk6iJ3edAPRoQj5JLwY0N5j1JhGYLBl83HhEyT8gi8dhRNgPQGPdNwNUsIdax4iR7JwGhyrMCBra0y3/uM4FoHxtHPmtAKggPYQWuuPVZLUGVBUaZ1XJILQZ3AB3G6tcprBr30Py/9xnkDu3781k1GK1uRs02WntZpKFeCCj6h2cFQ0qpaYKsaOJ4cFgkjemHaQ68wuQuqNuK5JTGMBkmL7jEU6hE6XAmTFpv4iyQhO2OV91iCWnVTq/i03C4c195B43MJg9fT/8ALoVxgMcypS/lsVPdSXNqw99WkYsGi/h5hdw4Z2Q4drWAxc8fvp9VaBx47fpf63QdHB1KAAddjhLHj4XA7dHW23+qMqE72uRt5j5KEK8Yk06oe5oAJ0l8XDXHxAjiLA+i2uSVGio+4JIbt13+ixWOhwIgmfa0/wCPYonsXjgHd290PHwnfUwQY8yOXJcv1XDvwNo36DIlPa+5vq1cX1wIl3nxAK51eWlv5gJ8tzH0QWLZr0u3BgEg/lF/UTwTG49pqaNQsJMG4vxC8ssdrj/R1iyZVuPIc/K6ZUraZLj4DtbY/cICrUbAfIEy2Zjc/v8AVB47ElwF7W5G/EnztujHDuYLLrAu8JPA7ceKhNad7CbfuhqONbsDuB5dTA2XYiu0iLbcfNT23u6DWEnE30323+oUQxAFt447wfqgjimAbmwuVUZnm7abA8vAuBHOeSux6dzdJCyyRirZpxXGya6m10WEX3usi7tTR03MkAkBkkmJ9AbcSqWr2zrmrLaYDODXG/WRt08+K04/Tc0uir9yieqxx7noGOrN8hHE8uN1l8x7SUyCxmp0NJOkWgbmeUT7LM5r2hrVDYBreI3MRBvFuOwVdUxjfyhw8OmJ1A+ImZMFtj5/NdHTemKKTn18GeesXRFjmdQ21FpLhqjUXFlzBN4EiLSbAE3QlGvoIMqvZVMyngl3pclddQowzy7rNTi+1b24Y0mnxO8IdN2tO8efD1ngs1hmWnibBRNbqKMaYv8A0ifXYfMz6JpPsVIusC8BumbctQbMTJ8IJv8Aqi5G+x5ht9rDU83+/ShwuKgQCff9gE+tjx5dY/clOhCfG1fX1n5C3JChlklKXSTPuERRAqOu5oaN9U/pzUIE5hIbTBDgYB8RDjHCw26KXvoxFP8A9WgH2/yhHPDnayNLRwB8JjYAeaXCAlxedzPpySTfysfH+pGlqYib8V1LGKppVjCka4g9Vz9p09xfsxthJ6JFX060CCJ5Lkm0bcVGPyvugNb2iof/AIhTBcBe5IMcNkG/DuABLHtBuJp6ZHMSUfh8/wALUc01aOlwvLbtJ82mIHQoquxuJqteazHssNFwQ0GAA2QRbkV1jkFdgMwq0NWgiHCCHNDmmOYLlb4bHUHkAE0jEnW5vdkwJ0nUS242vugczwQNfRTpCmyQ0HQ4+UwSXX33Q+YYI0qxpAl5EAaWhs9BeEAlo+haRBbYFzSCNzxBtaLGDYjiqzF0nMLajPiY4OHO3A8fTkUj+9pHSS6mbGDUI87hqIbmLnbhrgBHhaZ4bum+yVtVTGUX1Qbi+2mrSe5c10iYcINjqtxuRdVTO0WhrgykJcDqc50mTPlsPQpKuFoumfwvZ/yCEdlR06muBHn4T6TusUdJhiqS/LNL1GR9ySh2hriA/wATQ7UBJF4t6A3XYntDXc0tENnjuR05IN2EfE6ZHMXHndQuYRuCn9nHd7UJ7s/JNRzrEsc0ioSRzv6HyRn/APQYgg+IDVeYuOemdlWQlCkseN/+V/AVkn5YbXzau9mgvsbEixI5E8kC6YiTHKbeyWUkpoxUeioWTb6sQNSJSVG56ZIUR5UJTnPUcEq2KoRisaXEBokkwAOJRFVob4BeD4jzPl5BWmFwf8vS7x4/FqAhgP5Gnd3X75qvpUeJ/wCUscm5trovyFw2qn1OosgSo8U+wHMz6Cw/VEOKDxEknkLb8t/mmjy7A+ERa0Rh6c3Mge6jp0pgooCCIvtEj9FYVkwkiYhoO4ACmfiLaQTomQOJKZQwLncIHMoynhw0HSNR5n9OaDaXLCk5cIhp0zu4QBs1FUyh5JMk3UpcsuSe7hGvFDbyyam7dTB9ghGugJG1FVRdZdAyAkQVPFWXJaY25GOIStqkbFPcxRQugmc6g7D51WZYPMcjcfNGtz6YL6TCeYsVQuamhMLRq6+c0qrg53gLbABrSPYBF5jmNKsGw/xgQTOlpA2hoAAWL1FObVKlIPJtX91oGjSx4EEXe554mTZvROwuGY9oPifVJPhdDaYEbzN1ixXUzcWeZS7EHczVUKbX6u8eAGbU2zLjyFtlxwZqPbTeBRbFg7w23tN/+Vm2Y10/EVLUxz3XL563KGwm8tsVhmOdpYIAcGzsPUpubZe2m7RMG2xkwq9+Y1nM0OqAsmdPCeilweYVWHwOaNxw2O+6GwO9BGYZa1jQZibi+6ZUyxpph4MDqo6ZdvLJJ4+8qWrrqOBc5hO3IADyU9sm9EVPAte3UCBG94/5UdDCNcTwIuTBjqUY9jnDS6ozTOyRlGAR34aDYgceqntk3gNOk0u0xPmArDLcG0F1V4ljDDZ/M4QfYSPdD1cLSAMV79IT8BmbWU+5qAPbqLmuuHtJ38nA+aWeO1Q0J0xuMquqvLnW8uQ5IWo7lsrJ+GL2zTIM73E+0o3IuyD8S4g16NFrRJdUJ+QAv7pY7UqRHbdsz1Fhc4ACT+yIo5BV3Ph6o7M8IzC1SyjiG1yN6jWw3zDZJ90PUqPcJc5x9U6mog9tyJG5ZSZ8dQTyH+FIKjRanTA83fsoNIj79UQ0beUJJZn2LY4F3FYJu4zHPb0CnP8AhDtN1Iw7grPJt9S+KS6EGIpQeqjiUdpBEcuiBcYMKJkaGgSVxHJO806m4cUwBAFye/DzskUtEKzEUYQ3dK4xNEff35Ic0rq1TKHEratJC6Vb1aar6jPEVZGQkokOhdpRAZZIadym3C0Dlq4BECmmhiO4lDIT9KkLFKKX0SuQaIQE9vOE+m1SCn9JQcg0JbkEunyCfTZI+/vgpA1I2MkDtFkob5eamc2CmkKbg0RvEXUDmo51OQmNaopEcQWmxE06c2JTiISs3UcgpE1JgUtR/BRGyj1SQqupZ0CnG3SFI3YId5sntdb5IMJNWPFSMfsVCHWhNovtCWhrDtV/v0Q2Mop1J0hPLtQv9wh0YeoGx/PinFiicIKmpFOKTMfbmuXCmD5LkvAx/9k=",
+            ingredients: ["02 cenouras grandes", "03 xícaras (CHÁ) de açúcar", "01 xícara (CHÁ) de óleo", "03 xícaras (CHÁ) de farinha de trigo", "05 ovos", "01 colher (SOPA) de fermento"],
+            preparo: ["Bater no liquidificador as cenouras, óleo, ovos e o açúcar.", "Em uma tigela coloque a mistura e acrescente a farinha de trigo e o fermento", "Misture tudo e asse no forno por 40 minutos a 180°C", "A forma deve ser untada e polvilhada com farinha de trigo."]
+        },
+        {
+            id: 5,
+            title: "MOUSSE DE MARACUJÁ",
+            category: "Francesa",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPA4NLdbsP1Yf5hCnAWOeJNkzolZH9n_oQig&s",
+            ingredients: ["01 lata de leite condensado", "01 lata de creme de leite", "01 copo de suco de maracujá", "01 envelope de gelatina sem sabor", "02 maracujás para decorar"],
+            preparo: ["Bata tudo no liquidificador por 10 minutos e coloque numa vasilha", "Deixe na geladeira por 1 hora", "Depois decore a sobremesa com o suco e os 2 maracujás"]
+        },
+        {
+            id: 6,
+            title: "MOUSSE DE CHOCOLATE",
+            category: "Francesa",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1isqDik-7G-Fsx4JrA_2gMzfFgCpVG_0RDw&s",
+            ingredients: ["01 gema", "06 colheres de maizena", "08 colheres de chocolate em pó", "01 litro de leite", "01 colher de margarina", "01 lata de leite condensado", "01 colher de açúcar", "02 colheres (CHÁ) de baumilha", "01 lata de creme de leite"],
+            preparo: ["Acrecente o creme de leite depois de frio", "Bate na batedeira", "Depois coloque granulado por cima", "E leve a geladeira"]
+        }
+       
+    ];
+
+    function renderRecipes(recipesList) {
+        const container = document.getElementById('recipe-grid');
+        container.innerHTML = '';
+        
+        recipesList.forEach(recipe => {
+            const card = document.createElement('div');
+            card.className = "bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-transform hover:scale-105";
+            card.innerHTML = `
+                <img src="${recipe.image}" alt="${recipe.title}" class="w-full h-48 object-cover">
+                <div class="p-4">
+                    <h3 class="text-xl font-bold mb-2">${recipe.title}</h3>
+                    <div class="flex justify-between text-sm text-gray-600 dark:text-gray-300">                        
+                        <span><i class="fa-solid fa-tag mr-1"></i>${recipe.category}</span>
+                    </div>
+                    <div class="mt-3 flex justify-end">
+                        <button class="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300" onclick="showRecipeDetail(${recipe.id})" style="color: darkorchid;">
+                            Ver receita
+                        </button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function showRecipeDetail(id) {
+        const recipe = recipes.find(r => r.id === id);
+        if (!recipe) return;
+        
+        const detailSection = document.getElementById('recipe-detail');
+        detailSection.innerHTML = `
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                <img src="${recipe.image}" alt="${recipe.title}" class="w-full h-64 object-cover">
+                <div class="p-6">
+                    <h2 class="text-2xl font-bold mb-4">${recipe.title}</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-lg font-semibold mb-2">Ingredientes</h3>
+                            <ul class="list-disc pl-5 space-y-1">
+                                ${recipe.ingredients.map(ing => `<li>${ing}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold mb-2">Modo de Preparo</h3>
+                            <ol class="list-decimal pl-5 space-y-1">
+                                ${recipe.preparo.map(ing => `<li>${ing}</li>`).join('')}                               
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-end">
+                        <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition" onclick="showSection('home')" style="background-color: #9932cc;">
+                            Voltar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        showSection('recipe-detail');
+    }
+
+    function searchRecipes() {
+        const term = document.getElementById('search-input').value.toLowerCase();
+        const filtered = recipes.filter(recipe => 
+            recipe.title.toLowerCase().includes(term) || 
+            recipe.category.toLowerCase().includes(term)
+        );
+        renderRecipes(filtered);
+
+        // Adiciona o botão de voltar
+        const container = document.getElementById('recipe-grid');
+        const backButton = document.createElement('button');
+        backButton.className = "mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition";
+        backButton.style.backgroundColor = "#9932cc";
+        backButton.innerText = "Voltar para todas as receitas";
+        backButton.onclick = () => {
+            document.getElementById('search-input').value = '';
+            renderRecipes(recipes);
+        };
+        container.appendChild(backButton);
+    }
+
+    window.onload = function() {
+        renderRecipes(recipes);
+        showSection('home');
+    };
+</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
+
+<header class="bg-white dark:bg-gray-800 shadow-md">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+        <div class="flex items-center">
+            <i class="fa-solid fa-utensils text-blue-500 text-2xl mr-2" style="color: #9932cc;"></i>
+            <h1 class="text-xl font-bold">Receitas Geni</h1>
+        </div>
+    </div>
+</header>
+
+<main class="container mx-auto px-4 py-8">
+    <section id="home" class="hidden">
+        <div class="flex flex-col md:flex-row gap-8">
+            <div class="md:w-1/3">
+                <div class="bg-blue-500 text-white p-6 rounded-lg shadow-lg" style="background-color: #9932cc;">
+                    <h2 class="text-2xl font-bold mb-4">Encontre as receita</h2>                    
+                    <div class="relative">
+                        <input type="text" id="search-input" placeholder="Buscar receita..." style="color: black;" 
+                               class="w-full pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <i class="fa-solid fa-search absolute left-3 top-2.5 text-gray-400"></i>
+                    </div>
+                    <button class="mt-4 bg-white text-blue-500 px-4 py-2 rounded-lg hover:bg-blue-50 transition" onclick="searchRecipes()" style="color: darkorchid;">
+                        Buscar
+                    </button>
+                </div>
+            </div>
+            <div class="md:w-2/3">
+                <h2 class="text-2xl font-bold mb-6">Receitas em Destaque</h2>
+                <div id="recipe-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </div>
+        </div>
+    </section>       
+
+    <section id="recipe-detail" class="hidden"></section>
+</main>
+
+<footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-12">
+    <div class="container mx-auto px-4 py-6">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+            <p class="text-gray-600 dark:text-gray-300 mb-4 md:mb-0">© Receitas Geni</p>
+            <div class="flex space-x-4">
+                <a href="https://www.facebook.com/geni.ferreira.96742?locale=pt_BR" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="https://www.instagram.com/gen_iferreira/?hl=pt-br" class="text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>
